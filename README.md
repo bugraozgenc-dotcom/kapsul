@@ -8,9 +8,6 @@
 
 [English](README.en.md) · [DMG indir](https://github.com/bugraozgenc-dotcom/kapsul/releases/latest) · [Türkçe kullanım rehberi](docs/USAGE.tr.md)
 
-![Örnek içerikle Kapsül panelinin temsili görünümü](docs/images/overview.svg)
-
-*Temsili ürün görselidir; örnek içerik kullanılmıştır.*
 
 ## İndir ve başla
 
