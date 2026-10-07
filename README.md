@@ -2,6 +2,8 @@
 
 # Kapsül
 
+<img width="1920" height="1440" alt="950_1x_shots_so" src="https://github.com/user-attachments/assets/5d793e3d-40bc-4ed2-bea7-df32b172c595" />
+
 **Kopyala. Sakla. Yeniden bul.** Mac için açık kaynaklı pano geçmişi. Metin, bağlantı ve görsellerini arayabileceğin tek bir panelde, kaynaklarına göre düzenler.
 
 [English](README.en.md) · [DMG indir](https://github.com/bugraozgenc-dotcom/kapsul/releases/latest) · [Türkçe kullanım rehberi](docs/USAGE.tr.md)
@@ -20,7 +22,6 @@ macOS **14 veya üzeri** gerekir. Universal paket Apple Silicon ve Intel kodlar�
 
 **Bu sürüm ad hoc imzalıdır; Developer ID imzası ve Apple noter onayı yoktur.** macOS güvenlik uyarısı gösterebilir. [Kurulum rehberi](docs/USAGE.tr.md#kurulum) bu durumu açıklar. Intel çalışma testi henüz yapılmadı.
 
-![Kopyala, bul ve yeniden kullan](docs/images/workflow.svg)
 
 ## Özellikler
 
