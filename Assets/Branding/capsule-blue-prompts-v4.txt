@@ -1,0 +1,14 @@
+Use case: precise-object-edit
+Asset type: standalone Kapsül capsule brand emblem, transparent PNG
+Input image: edit target — preserve this exact emblem's composition and shapes.
+Primary request: make a strict color-only edit of the supplied horizontal capsule emblem, replacing its orange and burgundy palette with luminous BLUE tones.
+Color palette: left capsule half luminous azure/cyan-blue (#38BDF8 to #0EA5E9), right half rich cobalt/sapphire blue (#2563EB to #1D4ED8). Reflections and edge highlights cool ice blue/white; internal icons frosted icy white with a very pale blue tint. Remove all orange, red, burgundy, warm peach, yellow and gold hues.
+Constraints: preserve the exact horizontal capsule silhouette, central seam, curved ends, polished translucent glass material, highlights and 3D shading. Preserve all three interior symbols exactly: stacked documents with folded corner and lines, landscape picture with mountains and sun, browser window with globe and three small toolbar circles. Preserve their positions, sizes, spacing, typography-free design, framing, original layout and padding. No new objects, no lettering, no borders, no badge, no watermark, no rearrangement.
+Background: genuine transparent alpha background, not a rendered checkerboard, white backdrop or black backdrop. Keep the translucent capsule and icons cleanly cut out.
+Kapsül blue capsule logo and logotype — v4
+Tool: built-in image_gen
+transparent_background: true
+Input: kapsul-capsule-lockup-v3.png
+Output: kapsul-capsule-lockup-blue-v4.png
+
+Use case: precise-object-edit / logo-brand. Edit target: the supplied Kapsül capsule logo and wordmark image. Perform a COLOR-ONLY recoloring to harmonious BLUE tones. Preserve every shape, exact text "Kapsül" with the two umlaut dots on ü, existing letterforms, letter spacing, scale, emblem-to-wordmark relationship, capsule seam and horizontal silhouette, the document sheets, landscape image frame, browser window/globe inside it, existing polished glass material, bevels and highlight positions. Change the orange left capsule half to luminous azure/cyan blue (#38BDF8 to #0EA5E9). Change the red/burgundy right capsule half to rich cobalt/sapphire blue (#2563EB to #1D4ED8). Change the entire Kapsül lettering from burgundy to rich cobalt/sapphire blue, with restrained cool sky-blue edge highlights. All warm orange/yellow/red reflections must become icy pale blue or cool white, including edges and bevels. Keep inner document, picture and browser symbols frosted icy white with a very subtle pale-blue tint, crisp and readable. Preserve depth and glossy translucent liquid glass. No geometry redesign, no new elements, no warm colors remaining. Keep the same wide horizontal composition, optical alignment and clear padding. Preserve a genuine transparent background and clean alpha edges; no black or white background, no floor reflection, no extra words or watermark.

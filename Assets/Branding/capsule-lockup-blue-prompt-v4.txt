@@ -1,0 +1,7 @@
+Kapsül blue capsule logo and logotype — v4
+Tool: built-in image_gen
+transparent_background: true
+Input: kapsul-capsule-lockup-v3.png
+Output: kapsul-capsule-lockup-blue-v4.png
+
+Use case: precise-object-edit / logo-brand. Edit target: the supplied Kapsül capsule logo and wordmark image. Perform a COLOR-ONLY recoloring to harmonious BLUE tones. Preserve every shape, exact text "Kapsül" with the two umlaut dots on ü, existing letterforms, letter spacing, scale, emblem-to-wordmark relationship, capsule seam and horizontal silhouette, the document sheets, landscape image frame, browser window/globe inside it, existing polished glass material, bevels and highlight positions. Change the orange left capsule half to luminous azure/cyan blue (#38BDF8 to #0EA5E9). Change the red/burgundy right capsule half to rich cobalt/sapphire blue (#2563EB to #1D4ED8). Change the entire Kapsül lettering from burgundy to rich cobalt/sapphire blue, with restrained cool sky-blue edge highlights. All warm orange/yellow/red reflections must become icy pale blue or cool white, including edges and bevels. Keep inner document, picture and browser symbols frosted icy white with a very subtle pale-blue tint, crisp and readable. Preserve depth and glossy translucent liquid glass. No geometry redesign, no new elements, no warm colors remaining. Keep the same wide horizontal composition, optical alignment and clear padding. Preserve a genuine transparent background and clean alpha edges; no black or white background, no floor reflection, no extra words or watermark.

@@ -1,0 +1,71 @@
+name: macOS checks
+
+"on":
+  push:
+    paths:
+      - "Sources/**"
+      - "Tests/**"
+      - "scripts/**"
+      - "Assets/Branding/Kapsul.icns"
+      - "Package.swift"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    paths:
+      - "Sources/**"
+      - "Tests/**"
+      - "scripts/**"
+      - "Assets/Branding/Kapsul.icns"
+      - "Package.swift"
+      - ".github/workflows/ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: macos-26
+    timeout-minutes: 15
+    env:
+      KAPSUL_CHECK_CACHE_DIR: ${{ runner.temp }}/kapsul-checks
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Run standalone checks
+        run: scripts/check.sh
+
+  package:
+    name: Build universal DMG
+    if: github.event_name == 'workflow_dispatch'
+    needs: checks
+    runs-on: macos-26
+    timeout-minutes: 30
+    env:
+      COPYGLASS_BUILD_DIR: ${{ runner.temp }}/copyglass-build
+      KAPSUL_PACKAGE_CACHE_DIR: ${{ runner.temp }}/kapsul-packaging
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build optimized universal app
+        run: scripts/build-app.sh --release --universal
+      - name: Package and verify DMG
+        run: scripts/package-dmg.sh
+      - name: Upload ad hoc signed distribution artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: Kapsul-universal-ad-hoc-${{ github.run_number }}
+          path: |
+            dist/Kapsul-*-universal.dmg
+            dist/Kapsul-*-universal.dmg.sha256
+            dist/app-build-manifest.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14

@@ -1,0 +1,6 @@
+Kapsül approved blue emblem — square application icon export v4
+Tool: built-in image_gen; transparent_background: true
+Reference: kapsul-capsule-logo-blue-v4.png
+Output: kapsul-app-icon-blue-v4.png
+
+Use case: precise-object-edit / logo-brand. Adapt the supplied APPROVED blue Kapsül emblem to a square macOS application icon canvas. This is a canvas/framing edit only: preserve the exact existing luminous cyan left half, cobalt blue right half, horizontal closed capsule silhouette, thin center seam, three interior frosted symbols (overlapping document sheets, mountain-and-sun picture, browser window with globe), their relative geometry and polished translucent glass material. Do not redesign, redraw as a different logo, tilt, rotate, add a tile, change color, add letters or change icon arrangement. Output a square image with true transparent background. Center the unchanged horizontal capsule in both directions, large with about 90% canvas width and generous equal transparent space above and below; retain capsule aspect ratio. Clean alpha edges, no detached specks or stray color around the silhouette. No square background plate, no floor, no shadows outside the emblem, no words, no watermark. The intended result is the approved emblem placed on a transparent square export suitable for 1024x1024 app icon packaging.
