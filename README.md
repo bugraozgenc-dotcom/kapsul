@@ -8,7 +8,7 @@ Kapsül’ü, Mac’te kopyaladığımız şeyleri tekrar aramak zorunda kalmaya
 
 [DMG indir](https://github.com/bugraozgenc-dotcom/kapsul/releases/latest) · [English](README.en.md) · [Kullanım rehberi](docs/USAGE.tr.md)
 
-![Kapsül 0.6.0 — çalışan uygulamadaki bağlantı kartları](docs/images/screenshots/links.png)
+<img width="1920" height="1440" alt="219_1x_shots_so" src="https://github.com/user-attachments/assets/60c5bb2e-e07c-4da7-b2c4-c1c1270e5878" />
 
 *Bu sayfadaki ekran görüntüleri çalışan Kapsül 0.6.0 uygulamasından alındı.*
 
@@ -35,9 +35,8 @@ Paket şu an ad hoc imzalı; Developer ID imzası ve Apple noter onayı bulunmuy
 
 Türkçe, İngilizce, Fransızca, Almanca ve İspanyolca arayüz desteği var.
 
-![Kapsül’de kaynak grubu ve kayıt sayıları](docs/images/screenshots/source-github.png)
+<img width="1920" height="1440" alt="763_1x_shots_so" src="https://github.com/user-attachments/assets/10ebf6ee-5c07-4606-99a1-0ba6458ef52d" />
 
-![Kapsül’ün güncel görünüm, renk ve şeffaflık ayarları](docs/images/screenshots/appearance.png)
 
 ## Veriler nerede duruyor?
 
