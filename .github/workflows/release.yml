@@ -24,10 +24,11 @@ jobs:
     runs-on: macos-26
     timeout-minutes: 30
     env:
-      COPYGLASS_BUILD_DIR: ${{ runner.temp }}/copyglass-build
       COPYGLASS_VERSION: ${{ inputs.version }}
       COPYGLASS_BUILD_NUMBER: ${{ inputs.build_number }}
     steps:
+      - name: Configure build cache
+        run: echo "COPYGLASS_BUILD_DIR=$RUNNER_TEMP/copyglass-build" >> "$GITHUB_ENV"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
