@@ -2,142 +2,6 @@ import SwiftUI
 import AppKit
 import LinkPresentation
 
- enum ClipKind: String, Codable, CaseIterable {
-    case text = "Metin", url = "Bağlantı", instagram = "Instagram", image = "Görsel", screenshot = "Ekran görüntüsü", file = "Dosya"
-    var icon: String { switch self { case .text: return "text.alignleft"; case .url: return "link"; case .instagram: return "camera"; case .image: return "photo"; case .screenshot: return "viewfinder"; case .file: return "doc" } }
-    var color: Color { switch self { case .text: return .purple; case .url: return .blue; case .instagram: return .pink; case .image: return .orange; case .screenshot: return .teal; case .file: return .green } }
- }
- enum Retention: String, Codable, CaseIterable {
-    case month = "1 ay", quarter = "3 ay", year = "1 yıl", forever = "Sonsuz"
-    var months: Int? { switch self { case .month: return 1; case .quarter: return 3; case .year: return 12; case .forever: return nil } }
- }
- struct Clip: Identifiable, Codable {
-    var id = UUID()
-    var kind: ClipKind
-    var value: String
-    var date = Date()
-    var pinned = false
-    var asset: String? = nil
-    var source: ClipSource? = nil
-    var groupSource: ClipSource? { source ?? ClipSource.fromURL(value) ?? (kind == .instagram ? .instagram : nil) }
-    var webURL: URL? { guard let url = URL(string: value), ["http", "https"].contains(url.scheme?.lowercased() ?? ""), url.host != nil else { return nil }; return url }
-    private static let timestampFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "tr_TR")
-        formatter.timeZone = .autoupdatingCurrent
-        formatter.dateFormat = "dd.MM.yyyy • HH:mm"
-        return formatter
-    }()
-    var timestamp: String { Self.timestampFormatter.string(from: date) }
-    var title: String {
-        if kind == .screenshot { return L10n.text("Ekran görüntüsü") }; if kind == .image { return L10n.text("Kopyalanan görsel") }
-        if kind == .file { return URL(fileURLWithPath: value).lastPathComponent }
-        if kind == .instagram, let url = URL(string: value) { return url.path.isEmpty ? "Instagram" : url.path }
-        if kind == .url { return URL(string: value)?.host ?? value }
-        return String(value.prefix(90))
-    }
- }
- @MainActor final class ClipboardStore: ObservableObject {
-    @Published var clips: [Clip] = []
-    @Published var paused = false
-    @Published var retention: Retention { didSet { UserDefaults.standard.set(retention.rawValue, forKey: "retention"); prune(); save() } }
-    @Published var error: String?
-    private var timer: Timer?
-    private var screenshotMonitor: ScreenshotMonitor?
-    private var count = NSPasteboard.general.changeCount
-    private let folder: URL
-    init() {
-        retention = Retention(rawValue: UserDefaults.standard.string(forKey: "retention") ?? "1 ay") ?? .month
-        folder = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("CopyGlass", isDirectory: true)
-        do {
-            try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-            let location = folder.appendingPathComponent("history.json")
-            if FileManager.default.fileExists(atPath: location.path) { clips = try JSONDecoder().decode([Clip].self, from: Data(contentsOf: location)) }
-        } catch { self.error = L10n.text("Geçmiş yüklenemedi: %@", error.localizedDescription) }
-        prune()
-        screenshotMonitor = ScreenshotMonitor()
-        screenshotMonitor?.onScreenshot = { [weak self] url in
-            guard let self else { return false }
-            if self.paused { return true }
-            return self.importScreenshot(url)
-        }
-        timer = Timer.scheduledTimer(withTimeInterval: 0.7, repeats: true) { [weak self] _ in Task { @MainActor in self?.poll() } }
-    }
-    @discardableResult func importScreenshot(_ url: URL) -> Bool {
-        guard let image = NSImage(contentsOf: url), let tiff = image.tiffRepresentation,
-              let rep = NSBitmapImageRep(data: tiff), let data = rep.representation(using: .png, properties: [:]) else { return false }
-        let name = UUID().uuidString + ".png"
-        do {
-            try data.write(to: folder.appendingPathComponent(name), options: .atomic)
-            add(Clip(kind: .screenshot, value: url.lastPathComponent, asset: name))
-            return true
-        } catch { self.error = L10n.text("Ekran görüntüsü kaydedilemedi: %@", error.localizedDescription); return false }
-    }
-    func assetURL(_ clip: Clip) -> URL? { clip.asset.map { folder.appendingPathComponent($0) } }
-    func poll() {
-        prune()
-        let board = NSPasteboard.general
-        guard board.changeCount != count else { return }
-        count = board.changeCount
-        guard !paused else { return }
-        // Password managers use these standard pasteboard markers for private content.
-        let privateTypes = ["org.nspasteboard.ConcealedType", "org.nspasteboard.TransientType", "org.nspasteboard.AutoGeneratedType"]
-        guard !privateTypes.contains(where: { board.types?.contains(NSPasteboard.PasteboardType($0)) == true }) else { return }
-        if let files = board.readObjects(forClasses: [NSURL.self], options: [.urlReadingFileURLsOnly: true]) as? [URL], !files.isEmpty {
-            for file in files { add(Clip(kind: .file, value: file.path, source: currentSource())) }; return
-        }
-        if let data = board.data(forType: .png) ?? board.data(forType: .tiff), let image = NSImage(data: data), let tiff = image.tiffRepresentation, let rep = NSBitmapImageRep(data: tiff), let png = rep.representation(using: .png, properties: [:]) {
-            let name = UUID().uuidString + ".png"
-            do { try png.write(to: folder.appendingPathComponent(name), options: .atomic); add(Clip(kind: .image, value: "Görsel", asset: name, source: currentSource())) } catch { self.error = L10n.text("Görsel kaydedilemedi: %@", error.localizedDescription) }
-            return
-        }
-        guard let value = board.string(forType: .string), !value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
-        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-        var kind: ClipKind = .text
-        if let url = URL(string: trimmed), ["http", "https"].contains(url.scheme?.lowercased() ?? ""), let host = url.host?.lowercased() {
-            kind = (host == "instagram.com" || host.hasSuffix(".instagram.com")) ? .instagram : .url
-        }
-        add(Clip(kind: kind, value: kind == .text ? value : trimmed, source: ClipSource.fromURL(trimmed) ?? currentSource()))
-    }
-    func currentSource() -> ClipSource? { ClipSource.fromBundle(NSWorkspace.shared.frontmostApplication?.bundleIdentifier) }
-    func add(_ clip: Clip) {
-        if ![.image, .screenshot].contains(clip.kind), let i = clips.firstIndex(where: { $0.value == clip.value && $0.kind == clip.kind && $0.groupSource == clip.groupSource }) { var existing = clips.remove(at: i); existing.date = Date(); clips.insert(existing, at: 0) }
-        else { clips.insert(clip, at: 0) }
-        save()
-    }
-    @discardableResult func copy(_ clip: Clip) -> Bool {
-        let board = NSPasteboard.general
-        let success: Bool
-        if [.image, .screenshot].contains(clip.kind) {
-            guard let url = assetURL(clip), let image = NSImage(contentsOf: url) else {
-                error = L10n.text("Kopyalanacak görsel bulunamadı.")
-                return false
-            }
-            board.clearContents()
-            success = board.writeObjects([image])
-        } else if clip.kind == .file {
-            board.clearContents()
-            success = board.writeObjects([NSURL(fileURLWithPath: clip.value)])
-        } else {
-            board.clearContents()
-            success = board.setString(clip.value, forType: .string)
-        }
-        count = board.changeCount
-        if !success { error = L10n.text("İçerik panoya kopyalanamadı.") }
-        return success
-    }
-    func togglePin(_ clip: Clip) { guard let i = clips.firstIndex(where: { $0.id == clip.id }) else { return }; clips[i].pinned.toggle(); save() }
-    func remove(_ clip: Clip) { if let url = assetURL(clip) { try? FileManager.default.removeItem(at: url) }; clips.removeAll { $0.id == clip.id }; save() }
-    func clear() { for clip in clips { if let url = assetURL(clip) { try? FileManager.default.removeItem(at: url) } }; clips = []; save() }
-    func prune() {
-        guard let months = retention.months, let cutoff = Calendar.current.date(byAdding: .month, value: -months, to: Date()) else { return }
-        let expired = clips.filter { $0.date < cutoff }
-        guard !expired.isEmpty else { return }
-        for clip in expired { if let url = assetURL(clip) { try? FileManager.default.removeItem(at: url) } }
-        clips.removeAll { $0.date < cutoff }; save()
-    }
-    func save() { do { try JSONEncoder().encode(clips).write(to: folder.appendingPathComponent("history.json"), options: .atomic) } catch { self.error = L10n.text("Geçmiş kaydedilemedi: %@", error.localizedDescription) } }
- }
 
  struct GroupLabel: View {
     var kind: ClipKind?
@@ -158,12 +22,17 @@ import LinkPresentation
 
  struct ClipCard: View {
     let clip: Clip
+    var selectionMode = false
+    var selected = false
+    var onSelection: () -> Void = {}
     @EnvironmentObject var store: ClipboardStore
     @EnvironmentObject var catalog: SourceCatalog
     @EnvironmentObject private var localization: AppLocalization
     @AppStorage("linkPreviews") var previews = false
     @State private var confirmDelete = false
     @State private var deleteHovered = false
+    @State private var editMetadata = false
+    @State private var showRecognizedText = false
     private let contentHeight: CGFloat = 177
     private var header: some View {
         HStack {
@@ -173,8 +42,9 @@ import LinkPresentation
             }.font(.caption.weight(.semibold)).lineLimit(1)
             Spacer()
             if clip.webURL != nil { Image(systemName: "arrow.up.right").font(.caption).foregroundStyle(.secondary) }
+            if !(clip.tags ?? []).isEmpty { Image(systemName: "tag.fill").foregroundStyle(.secondary).help((clip.tags ?? []).joined(separator: ", ")) }
             if clip.pinned { Image(systemName: "pin.fill").foregroundStyle(.secondary) }
-        }.padding(.trailing, 30).frame(height: 20)
+        }.padding(.leading, selectionMode ? 30 : 0).padding(.trailing, 30).frame(height: 20)
     }
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -207,12 +77,25 @@ import LinkPresentation
                 Text(clip.timestamp).font(.caption).foregroundStyle(.secondary)
                     .lineLimit(1).minimumScaleFactor(0.85)
                 Spacer(minLength: 0)
+            }.frame(height: 18)
+            HStack {
+                Menu { cardActions } label: { Image(systemName: "ellipsis.circle") }.menuStyle(.borderlessButton).fixedSize()
+                    .help(localization.text("Kayıt işlemleri"))
+                if [.image, .screenshot].contains(clip.kind) {
+                    Button { openRecognizedText() } label: {
+                        if store.recognizing.contains(clip.id) { ProgressView().controlSize(.small) }
+                        else { Image(systemName: "text.viewfinder") }
+                    }.buttonStyle(.plain).help(localization.text("Görselden metin"))
+                }
+                Spacer()
                 CopyFeedbackButton { store.copy(clip) }
             }.frame(height: 28)
 
-        }.padding(18).frame(maxWidth: .infinity).frame(height: 304, alignment: .top)
+        }.padding(18).frame(maxWidth: .infinity).frame(height: 334, alignment: .top)
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20)).overlay(RoundedRectangle(cornerRadius: 20).stroke(.white.opacity(0.3), lineWidth: 1))
+        .allowsHitTesting(!selectionMode).accessibilityHidden(selectionMode)
         .overlay(alignment: .topTrailing) {
+            if !selectionMode {
             Button { confirmDelete = true } label: {
                 Image(systemName: "xmark").font(.system(size: 10, weight: .semibold))
                     .foregroundStyle(deleteHovered ? Color.red : Color.secondary)
@@ -224,14 +107,59 @@ import LinkPresentation
                 .onHover { deleteHovered = $0 }
                 .help(localization.text("Kaydı sil"))
                 .accessibilityLabel(localization.text("Kaydı sil: %@", clip.title))
+            }
         }
+        .overlay {
+            if selectionMode {
+                Button(action: onSelection) {
+                    RoundedRectangle(cornerRadius: 20).fill(Color.blue.opacity(selected ? 0.10 : 0.001))
+                        .overlay(RoundedRectangle(cornerRadius: 20).stroke(selected ? Color.blue : Color.primary.opacity(0.12), lineWidth: selected ? 2 : 1))
+                        .contentShape(RoundedRectangle(cornerRadius: 20))
+                }.buttonStyle(.plain)
+                    .accessibilityLabel(localization.text("Seç: %@", clip.title))
+                    .accessibilityAddTraits(selected ? [.isSelected] : [])
+            }
+        }
+        .overlay(alignment: .topLeading) {
+            if selectionMode {
+                selectionMark.padding(14).allowsHitTesting(false).accessibilityHidden(true)
+            }
+        }
+        .sheet(isPresented: $editMetadata) { ClipMetadataEditor(clip: clip) }
+        .sheet(isPresented: $showRecognizedText) { RecognizedTextView(clipID: clip.id) }
         .alert(localization.text("Emin misiniz?"), isPresented: $confirmDelete) {
             Button(localization.text("Vazgeç"), role: .cancel) {}
             Button(localization.text("Sil"), role: .destructive) { store.remove(clip) }
         } message: {
             Text(localization.text("Bu kaydı silmek istediğinize emin misiniz? Kayıt pano geçmişinden kaldırılacak."))
         }
-        .contextMenu { Button(localization.text("Kopyala")) { store.copy(clip) }; Button(localization.text(clip.pinned ? "Sabitlemeyi kaldır" : "Sabitle")) { store.togglePin(clip) }; if let url = clip.webURL { Button(localization.text("Tarayıcıda aç")) { NSWorkspace.shared.open(url) } }; Button(localization.text("Sil"), role: .destructive) { confirmDelete = true } }
+        .contextMenu { if !selectionMode { cardActions } }
+    }
+    private var selectionMark: some View {
+        Image(systemName: selected ? "checkmark.circle.fill" : "circle")
+            .font(.system(size: 22, weight: .medium))
+            .foregroundStyle(selected ? Color.blue : Color.secondary)
+            .frame(width: 28, height: 28)
+            .background(.regularMaterial, in: Circle())
+    }
+    @ViewBuilder private var cardActions: some View {
+        Button(localization.text("Kopyala")) { store.copy(clip) }
+        Button(localization.text("Düz metin olarak kopyala")) { store.copy(clip, plainText: true) }
+            .disabled([.image, .screenshot].contains(clip.kind) && (clip.extractedText ?? "").isEmpty)
+        if [.image, .screenshot].contains(clip.kind) { Button(localization.text("Görselden metin")) { openRecognizedText() } }
+        Divider()
+        Button(localization.text("Etiketler ve koleksiyonlar")) { editMetadata = true }
+        Button(localization.text(clip.pinned ? "Sabitlemeyi kaldır" : "Sabitle")) { store.togglePin(clip) }
+        if let url = clip.webURL { Button(localization.text("Tarayıcıda aç")) { NSWorkspace.shared.open(url) } }
+        if let id = clip.sourceBundleID, !store.isExcluded(id) {
+            Button(localization.text("Bu uygulamayı hariç tut")) { store.excludedApps.append(ExcludedApplication(id: id, name: clip.sourceAppName ?? id)) }
+        }
+        Divider()
+        Button(localization.text("Sil"), role: .destructive) { confirmDelete = true }
+    }
+    private func openRecognizedText() {
+        if clip.extractedText == nil { store.recognize(clip) }
+        showRecognizedText = true
     }
  }
 
@@ -240,12 +168,18 @@ import LinkPresentation
     @EnvironmentObject var catalog: SourceCatalog
     @EnvironmentObject private var localization: AppLocalization
     @AppStorage("appearance") private var appearance = AppearanceMode.system.rawValue
+    @Environment(\.colorScheme) private var colorScheme
     @State private var selection = "Tümü"
     @State private var query = ""
     @State private var settings = false
+    @State private var selecting = false
+    @State private var selectedIDs = Set<UUID>()
+    @EnvironmentObject private var panel: PanelController
+    @Environment(\.openWindow) private var openWindow
     @FocusState private var searchFocused: Bool
     private var selectedTitle: String {
-        if selection == "Tümü" { return localization.text("Her şey, bir arada.") }
+        if selection == "Tümü" { return localization.text("Tümü") }
+        if selection.hasPrefix("collection:"), let collection = store.collections.first(where: { "collection:" + $0.id.uuidString == selection }) { return collection.name }
         if selection.hasPrefix("custom:"), let source = catalog.customs.first(where: { "custom:" + $0.id.uuidString == selection }) { return source.name }
         return localization.text(selection)
     }
@@ -255,35 +189,25 @@ import LinkPresentation
             let matchesGroup: Bool
             if selection == "Tümü" { matchesGroup = true }
             else if selection == "Sabitlenenler" { matchesGroup = clip.pinned }
+            else if selection.hasPrefix("collection:") { matchesGroup = (clip.collectionIDs ?? []).contains { "collection:" + $0.uuidString == selection } }
             else if selection.hasPrefix("custom:") { matchesGroup = custom.map { "custom:" + $0.id.uuidString == selection } ?? false }
             else { matchesGroup = clip.kind.rawValue == selection || (custom == nil && clip.groupSource?.rawValue == selection) }
-            return matchesGroup && (query.isEmpty || clip.value.localizedCaseInsensitiveContains(query))
+            return matchesGroup && (query.isEmpty || clip.searchableText.localizedCaseInsensitiveContains(query))
         }
     }
     var body: some View {
-        NavigationSplitView {
-            VStack(alignment: .leading, spacing: 24) {
-                BrandHeader().padding(.top, 22).padding(.horizontal, 18)
-                GlassSidebar(selection: $selection)
-                VStack(alignment: .leading, spacing: 12) {
-                    Button { settings = true } label: { Label(localization.text("Ayarlar"), systemImage: "gearshape") }.buttonStyle(.plain)
-                }.padding(20)
-            }.background(.ultraThinMaterial).navigationSplitViewColumnWidth(220)
-        } detail: {
-            ZStack {
-                LinearGradient(colors: [Color.blue.opacity(0.12), Color.purple.opacity(0.07), Color(nsColor: .windowBackgroundColor)], startPoint: .topLeading, endPoint: .bottomTrailing).ignoresSafeArea()
-                VStack(alignment: .leading, spacing: 22) {
-                    HStack { VStack(alignment: .leading, spacing: 5) { Text(selectedTitle).font(.system(size: 30, weight: .bold, design: .rounded)) }; Spacer(); Button { store.paused.toggle() } label: { Image(systemName: store.paused ? "play" : "pause") }.help(localization.text(store.paused ? "Takibi sürdür" : "Takibi duraklat")) }
-                    HStack { Image(systemName: "magnifyingglass").foregroundStyle(.secondary); TextField(localization.text("Metin veya bağlantı ara…"), text: $query).textFieldStyle(.plain).focused($searchFocused); if !query.isEmpty { Button { query = "" } label: { Image(systemName: "xmark.circle.fill") }.buttonStyle(.plain) } }.padding(13).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
-                    if filtered.isEmpty {
-                        if query.isEmpty { ClipboardEmptyState() }
-                        else { ContentUnavailableView(localization.text("Sonuç bulunamadı"), systemImage: "magnifyingglass", description: Text(localization.text("Başka bir kelime dene."))).frame(maxWidth: .infinity, maxHeight: .infinity) }
-                    }
-                    else { ScrollView { LazyVGrid(columns: [GridItem(.adaptive(minimum: 260, maximum: 400), alignment: .top)], alignment: .leading, spacing: 18) { ForEach(filtered) { ClipCard(clip: $0) } }.padding(.bottom, 20) } }
-                    HStack { Text(localization.text("Yerel depolama")).font(.caption); Spacer(); Text(localization.text("Saklama: %@", localization.text(store.retention.rawValue))).font(.caption) }.foregroundStyle(.secondary)
-                }.padding(30)
+        NavigationSplitView { sidebar } detail: { detailPanel }
+            .background { GlassWindowSurface().ignoresSafeArea() }
+            .preferredColorScheme(AppearanceMode(rawValue: appearance)?.colorScheme)
+            .onAppear {
+                panel.showPanel = { openWindow(id: "history") }
+                panel.start()
             }
-        }.preferredColorScheme(AppearanceMode(rawValue: appearance)?.colorScheme)
+            .onChange(of: selecting) { _, active in if active { searchFocused = false } }
+            .onChange(of: filtered.map(\.id)) { _, ids in selectedIDs.formIntersection(ids) }
+            .onChange(of: store.collections) { _, collections in
+                if selection.hasPrefix("collection:"), !collections.contains(where: { "collection:" + $0.id.uuidString == selection }) { selection = "Tümü" }
+            }
             .onChange(of: localization.language) { _, _ in
                 let titleKey = "Kapsül — Pano geçmişi"
                 let knownTitles = Set(L10n.catalog.values.compactMap { $0[titleKey] })
@@ -295,7 +219,47 @@ import LinkPresentation
                 if selection.hasPrefix("custom:"), !sources.contains(where: { "custom:" + $0.id.uuidString == selection }) { selection = "Tümü" }
             }.frame(minWidth: 850, minHeight: 600).background { Button(localization.text("Ara")) { searchFocused = true }.keyboardShortcut("f", modifiers: .command).hidden() }.sheet(isPresented: $settings) { SettingsView() }.alert(localization.text("Depolama hatası"), isPresented: Binding(get: { store.error != nil }, set: { if !$0 { store.error = nil } })) { Button(localization.text("Tamam")) { store.error = nil } } message: { Text(store.error ?? "") }
     }
+    private var sidebar: some View {
+            VStack(alignment: .leading, spacing: 24) {
+                BrandHeader().padding(.top, 22).padding(.horizontal, 18)
+                GlassSidebar(selection: $selection)
+                    .overlay(alignment: .bottom) {
+                        SidebarSettingsFooter(title: localization.text("Ayarlar")) { settings = true }
+                    }
+            }.background(SidebarTint())
+                .navigationSplitViewColumnWidth(min: 180, ideal: 220, max: 360)
+    }
+    private var detailPanel: some View {
+            ZStack {
+                LinearGradient(colors: [Color.blue.opacity(0.07), Color.purple.opacity(0.035), Color.clear], startPoint: .topLeading, endPoint: .bottomTrailing).ignoresSafeArea()
+                VStack(alignment: .leading, spacing: 22) {
+                    HStack { VStack(alignment: .leading, spacing: 5) { Text(selectedTitle).font(.system(size: 30, weight: .bold, design: .rounded)) }; Spacer(); Button(localization.text(selecting ? "Seçimi bitir" : "Çoklu seçim")) { selecting.toggle(); selectedIDs = [] }; Button { store.paused.toggle() } label: { Image(systemName: store.paused ? "play" : "pause") }.help(localization.text(store.paused ? "Takibi sürdür" : "Takibi duraklat")) }
+                    HStack { Image(systemName: "magnifyingglass").foregroundStyle(.secondary); TextField(localization.text("Metin veya bağlantı ara…"), text: $query).textFieldStyle(.plain).focused($searchFocused); if !query.isEmpty { Button { query = "" } label: { Image(systemName: "xmark.circle.fill") }.buttonStyle(.plain) } }.padding(13).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+                    if selecting {
+                        BulkSelectionBar(ids: $selectedIDs, visibleIDs: Set(filtered.map(\.id))) {
+                            selecting = false; selectedIDs = []
+                        }
+                    }
+                    if let notice = store.notice {
+                        HStack {
+                            Text(notice).font(.caption).foregroundStyle(.secondary)
+                            Spacer()
+                            Button { store.notice = nil } label: { Image(systemName: "xmark") }.buttonStyle(.plain)
+                        }
+                    }
+                    if filtered.isEmpty {
+                        if query.isEmpty { ClipboardEmptyState() }
+                        else { ContentUnavailableView(localization.text("Sonuç bulunamadı"), systemImage: "magnifyingglass", description: Text(localization.text("Başka bir kelime dene."))).frame(maxWidth: .infinity, maxHeight: .infinity) }
+                    }
+                    else { ScrollView { LazyVGrid(columns: [GridItem(.adaptive(minimum: 260, maximum: 400), alignment: .top)], alignment: .leading, spacing: 18) { ForEach(filtered) { clip in ClipCard(clip: clip, selectionMode: selecting, selected: selectedIDs.contains(clip.id), onSelection: {
+                        if !selecting { selecting = true; selectedIDs = [] }
+                        if selectedIDs.contains(clip.id) { selectedIDs.remove(clip.id) } else { selectedIDs.insert(clip.id) }
+                    }) } }.padding(.bottom, 20) } }
+                }.padding(30)
+            }
+    }
  }
+
  final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         if let url = Bundle.module.url(forResource: "app-icon", withExtension: "png"), let icon = NSImage(contentsOf: url) {
@@ -311,18 +275,22 @@ import LinkPresentation
     }
  }
  struct PanelMenu: View {
+    @EnvironmentObject private var updater: AppUpdater
+    @EnvironmentObject private var panel: PanelController
     @Environment(\.openWindow) private var openWindow
     @EnvironmentObject var store: ClipboardStore
     @EnvironmentObject private var localization: AppLocalization
     var body: some View {
         Button(localization.text("Geçmiş panelini aç")) {
-            openWindow(id: "history")
-            NSApplication.shared.activate(ignoringOtherApps: true)
+            panel.showPanel = { openWindow(id: "history") }
+            panel.open()
         }.keyboardShortcut("o", modifiers: .command)
         Divider()
         Button(localization.text(store.paused ? "Takibi sürdür" : "Takibi duraklat")) { store.paused.toggle() }
         Divider()
         ForEach(Array(store.clips.prefix(8))) { clip in Button(clip.title) { store.copy(clip) } }
+        Divider()
+        Button(localization.text("Güncellemeleri kontrol et")) { updater.checkForUpdates() }.disabled(!updater.canCheckForUpdates)
         Divider()
         Button(localization.text("Çıkış")) { NSApplication.shared.terminate(nil) }
     }
@@ -332,12 +300,20 @@ import LinkPresentation
     @StateObject private var store = ClipboardStore()
     @StateObject private var catalog = SourceCatalog()
     @StateObject private var localization = AppLocalization()
+    @StateObject private var updater = AppUpdater()
+    @StateObject private var panel = PanelController.shared
     var body: some Scene {
-        Window(localization.text("Kapsül — Pano geçmişi"), id: "history") { ContentView().environmentObject(store).environmentObject(catalog).environmentObject(localization).environment(\.locale, localization.language.locale) }
+        Window(localization.text("Kapsül — Pano geçmişi"), id: "history") { ContentView().environmentObject(panel).environmentObject(updater).environmentObject(store).environmentObject(catalog).environmentObject(localization).environment(\.locale, localization.language.locale) }
             .windowStyle(.hiddenTitleBar)
             .defaultSize(width: 1100, height: 740)
+            .commands {
+                CommandGroup(after: .appInfo) {
+                    Button(localization.text("Güncellemeleri kontrol et")) { updater.checkForUpdates() }
+                        .disabled(!updater.canCheckForUpdates)
+                }
+            }
         MenuBarExtra("Kapsül", systemImage: "doc.on.clipboard") {
-            PanelMenu().environmentObject(store).environmentObject(localization).environment(\.locale, localization.language.locale)
+            PanelMenu().environmentObject(panel).environmentObject(updater).environmentObject(store).environmentObject(localization).environment(\.locale, localization.language.locale)
         }
     }
  }

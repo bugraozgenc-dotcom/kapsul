@@ -24,7 +24,7 @@ Pano yaklaşık 0,7 saniyede bir kontrol edilir. Bu aralıkta çok hızlı art a
 - Arama alanına bir kelime ya da URL parçası yazın. **⌘F** aramaya odaklanır. Arama seçili gruptaki kayıtların metin ve bağlantı değerlerinde yapılır; görsellerde OCR araması yoktur.
 - Bağlantı kartının başlığına veya içeriğine tıklayın; URL varsayılan tarayıcıda açılır.
 - **Kopyala**, içeriği panoya geri koyar. Başarılı olduğunda yeşil **Kopyalandı** yazısı ve onay işareti görünür.
-- Görsel veya ekran görüntüsünün üzerine gelin ya da tıklayın. Büyük önizlemenin altındaki **Kopyala** düğmesi görseli kopyalar.
+- Görsel veya ekran görüntüsüne tıklayın. Büyük önizlemenin altındaki **Kopyala** düğmesi görseli kopyalar.
 - Sağ tıklayarak **Sabitle** seçin. Kayıt ayrıca **Sabitlenenler** grubunda görünür. Aynı menüden sabitlemeyi kaldırabilirsiniz.
 - Kartın sağ üstündeki **×** düğmesine basın ve onaylayın; kayıt geçmişten silinir. İşlem geri alınamaz.
 

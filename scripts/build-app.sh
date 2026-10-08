@@ -50,8 +50,8 @@ from pathlib import Path
 source = Path(sys.argv[1])
 build_root = Path(sys.argv[2]).expanduser().resolve()
 configuration, requested_arch = sys.argv[3:5]
-version = os.environ.get('COPYGLASS_VERSION', '0.4.0')
-build_number = os.environ.get('COPYGLASS_BUILD_NUMBER', '4')
+version = os.environ.get('COPYGLASS_VERSION', '0.6.0')
+build_number = os.environ.get('COPYGLASS_BUILD_NUMBER', '6')
 if not re.fullmatch(r'\d+\.\d+\.\d+', version) or not re.fullmatch(r'\d+', build_number):
     raise SystemExit('COPYGLASS_VERSION must be x.y.z; COPYGLASS_BUILD_NUMBER must be an integer.')
 identity = os.environ.get('CODE_SIGN_IDENTITY', '').strip() or '-'
@@ -89,19 +89,39 @@ try:
     executable.chmod(0o755)
     shutil.copytree(source/'CopyGlass_CopyGlass.bundle', contents/'Resources/CopyGlass_CopyGlass.bundle',
                     copy_function=shutil.copyfile)
+    updates = json.loads(Path('Config/updates.json').read_text())
+    frameworks = list((build_root/'artifacts/sparkle/Sparkle').rglob('macos-arm64_x86_64/Sparkle.framework'))
+    if len(frameworks) != 1:
+        raise SystemExit('Expected one universal Sparkle.framework in SwiftPM artifacts.')
+    (contents/'Frameworks').mkdir()
+    framework = contents/'Frameworks/Sparkle.framework'
+    def copy_code(source, destination):
+        shutil.copyfile(source, destination)
+        shutil.copymode(source, destination)
+        return destination
+    shutil.copytree(frameworks[0], framework, symlinks=True, copy_function=copy_code)
     with (contents/'Info.plist').open('wb') as f:
         plistlib.dump({'CFBundleExecutable':'CopyGlass','CFBundleIdentifier':'local.copyglass.app',
                       'CFBundleName':'Kapsül','CFBundleDisplayName':'Kapsül','CFBundleIconFile':'Kapsul.icns',
                       'CFBundlePackageType':'APPL','CFBundleShortVersionString':version,
                       'CFBundleVersion':build_number,'CFBundleDevelopmentRegion':'tr',
                       'CFBundleLocalizations':['tr','en','fr','de','es'],
-                      'LSMinimumSystemVersion':'14.0','NSHighResolutionCapable':True}, f)
+                      'LSMinimumSystemVersion':'14.0','NSHighResolutionCapable':True,
+                      'SUFeedURL':updates['feedURL'], 'SUPublicEDKey':updates['publicEDKey'],
+                      'SUEnableAutomaticChecks':False, 'SUAutomaticallyUpdate':False,
+                      'SUVerifyUpdateBeforeExtraction':True}, f)
     shutil.copyfile('Assets/Branding/Kapsul.icns', contents/'Resources/Kapsul.icns')
 
     sign_args = ['codesign', '--force', '--sign', identity]
     if developer_id:
         sign_args += ['--options', 'runtime', '--timestamp']
-    # The resource bundle contains data only; the executable is the only nested code.
+    # Sign nested Sparkle code inside-out, preserving framework symlinks.
+    nested = [path for path in framework.rglob('*') if not path.is_symlink()
+              and (path.suffix in {'.xpc', '.app'} or path.name in {'Autoupdate', 'Sparkle'})]
+    for path in sorted(nested, key=lambda path: len(path.parts), reverse=True):
+        if path.is_file() or path.suffix in {'.xpc', '.app'}:
+            subprocess.run(sign_args + [str(path)], check=True)
+    subprocess.run(sign_args + [str(framework)], check=True)
     subprocess.run(sign_args + [str(executable)], check=True)
     subprocess.run(sign_args + [str(stage_app)], check=True)
     subprocess.run(['codesign', '--verify', '--deep', '--strict', '--verbose=2', str(stage_app)], check=True)

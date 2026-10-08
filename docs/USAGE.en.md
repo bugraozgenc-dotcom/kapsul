@@ -24,7 +24,7 @@ The clipboard is checked about every 0.7 seconds. Very fast successive copies wi
 - Enter a word or part of a URL in the search field. **⌘F** focuses search. Search matches item text and link values in the selected group; it does not perform OCR on images.
 - Click the heading or content of a link card to open its URL in your default browser.
 - **Copy** puts the item back on the clipboard. Success appears as a green **Copied** label with a checkmark.
-- Hover over or click an image or screenshot to open a larger preview. Its **Copy** button copies the image.
+- Click an image or screenshot to open a larger preview. Its **Copy** button copies the image.
 - Right-click a card and select **Pin** to include it in **Pinned**. Use the same menu to unpin it.
 - Click **×** at the top right of a card and confirm to delete the item from history. Deletion cannot be undone.
 

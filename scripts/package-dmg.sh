@@ -69,7 +69,16 @@ cleanup() {
 trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
-mkdir -p "$kapsul_stage_dir" "$kapsul_mount_dir"
+mkdir -p "$kapsul_stage_dir/.background" "$kapsul_mount_dir"
+# Finder metadata is generated with pinned, build-only Python dependencies.
+kapsul_python="$kapsul_cache_dir/python/bin/python"
+if [[ ! -x "$kapsul_python" ]]; then
+  python3 -m venv "$kapsul_cache_dir/python"
+fi
+if ! "$kapsul_python" -c 'import ds_store, mac_alias; from importlib.metadata import version; assert version("ds-store") == "1.3.1"; assert version("mac-alias") == "2.2.2"' >/dev/null 2>&1; then
+  "$kapsul_python" -m pip install ds-store==1.3.1 mac-alias==2.2.2
+fi
+xcrun swift scripts/render-dmg-background.swift "$kapsul_stage_dir/.background/background.png"
 
 python3 - "$kapsul_app_path" "$kapsul_stage_dir" "$kapsul_version" "$kapsul_signing_status" <<'PY'
 import os
@@ -132,7 +141,7 @@ INSTALLATION
 Requires macOS 14 or later.
 {signing[1]}
 '''
-(stage / 'Kurulum - Installation.txt').write_text(readme, encoding='utf-8')
+(stage / '.background' / 'Kurulum - Installation.txt').write_text(readme, encoding='utf-8')
 PY
 
 # Finder/iCloud metadata from the source must not invalidate the copied bundle.
@@ -140,19 +149,23 @@ PY
 /usr/bin/codesign --verify --deep --strict --verbose=2 "$kapsul_stage_dir/Kapsül.app"
 kapsul_filename="Kapsul-$kapsul_version-$kapsul_arch_label.dmg"
 kapsul_temp_dmg="$kapsul_work_dir/$kapsul_filename"
-/usr/bin/hdiutil create -srcfolder "$kapsul_stage_dir" -volname 'Kapsül' \
-  -fs HFS+ -format UDZO -imagekey zlib-level=9 -nospotlight "$kapsul_temp_dmg"
-/usr/bin/hdiutil verify "$kapsul_temp_dmg"
+kapsul_rw_dmg="$kapsul_work_dir/layout.dmg"
+/usr/bin/hdiutil create -srcfolder "$kapsul_stage_dir" -volname 'Kapsül Kurulum' \
+  -fs HFS+ -format UDRW -nospotlight "$kapsul_rw_dmg"
 # Set this before attaching so an interrupted attach also retains the mount safely.
 kapsul_attached=1
-/usr/bin/hdiutil attach -readonly -nobrowse -noautoopen -mountpoint "$kapsul_mount_dir" "$kapsul_temp_dmg"
+/usr/bin/hdiutil attach -nobrowse -noautoopen -mountpoint "$kapsul_mount_dir" "$kapsul_rw_dmg"
 [[ -d "$kapsul_mount_dir/Kapsül.app/Contents" ]]
 [[ -L "$kapsul_mount_dir/Applications" ]]
 [[ "$(readlink "$kapsul_mount_dir/Applications")" == '/Applications' ]]
-[[ -f "$kapsul_mount_dir/Kurulum - Installation.txt" ]]
+[[ -f "$kapsul_mount_dir/.background/Kurulum - Installation.txt" ]]
+"$kapsul_python" scripts/style-dmg.py "$kapsul_mount_dir"
+[[ -f "$kapsul_mount_dir/.DS_Store" ]]
 /usr/bin/codesign --verify --deep --strict --verbose=2 "$kapsul_mount_dir/Kapsül.app"
 /usr/bin/hdiutil detach "$kapsul_mount_dir"
 kapsul_attached=0
+/usr/bin/hdiutil convert "$kapsul_rw_dmg" -format UDZO -imagekey zlib-level=9 -o "$kapsul_temp_dmg"
+/usr/bin/hdiutil verify "$kapsul_temp_dmg"
 
 mv -f "$kapsul_temp_dmg" "$kapsul_output_dir/$kapsul_filename"
 (cd "$kapsul_output_dir" && /usr/bin/shasum -a 256 "$kapsul_filename" > "$kapsul_filename.sha256")

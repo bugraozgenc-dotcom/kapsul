@@ -65,8 +65,6 @@ struct ImagePreview: View {
     var thumbnailHeight: CGFloat = 130
     let copy: () -> Bool
     @EnvironmentObject private var localization: AppLocalization
-    @State private var hovering = false
-    @State private var previewHovering = false
     @State private var showPreview = false
     private var previewWidth: CGFloat { min(560, (NSScreen.main?.visibleFrame.width ?? 900) - 80) }
     private var previewImageHeight: CGFloat { min(380, (NSScreen.main?.visibleFrame.height ?? 700) - 220) }
@@ -77,14 +75,10 @@ struct ImagePreview: View {
                 .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .contentShape(Rectangle())
-                .onHover { inside in
-                    hovering = inside
-                    if inside { showPreview = true }
-                    else { scheduleClose() }
-                }
                 .onTapGesture { showPreview = true }
                 .accessibilityLabel(title)
                 .accessibilityAddTraits(.isButton)
+                .accessibilityAction { showPreview = true }
                 .popover(isPresented: $showPreview, arrowEdge: .trailing) {
                     VStack(spacing: 0) {
                         HStack {
@@ -110,14 +104,8 @@ struct ImagePreview: View {
                             .background(.regularMaterial)
                     }.frame(width: previewWidth)
                         .fixedSize(horizontal: false, vertical: true)
-                        .onHover { inside in previewHovering = inside; if !inside { scheduleClose() } }
 
                 }
         }.frame(height: thumbnailHeight)
-    }
-    private func scheduleClose() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-            if !hovering && !previewHovering { showPreview = false }
-        }
     }
 }

@@ -1,49 +1,61 @@
-<p align="center"><img src="docs/images/app-icon.png" width="116" alt="Kapsül mavi cam kapsül ikonu"></p>
+<p align="center"><img src="docs/images/app-icon.png" width="116" alt="Kapsül uygulama ikonu"></p>
 
 # Kapsül
 
-**Kopyala. Sakla. Yeniden bul.** Mac için açık kaynaklı pano geçmişi. Metin, bağlantı ve görsellerini arayabileceğin tek bir panelde, kaynaklarına göre düzenler.
+Az önce kopyaladığın bağlantı neredeydi? Ya dün aldığın ekran görüntüsü?
 
-[English](README.en.md) · [DMG indir](https://github.com/bugraozgenc-dotcom/kapsul/releases/latest) · [Türkçe kullanım rehberi](docs/USAGE.tr.md)
+Kapsül’ü, Mac’te kopyaladığımız şeyleri tekrar aramak zorunda kalmayalım diye yaptık. Metinleri, bağlantıları ve görselleri bir arada tutuyor; ihtiyacın olduğunda arayıp yeniden kopyalayabiliyorsun. Küçük, ücretsiz ve açık kaynaklı bir pano arkadaşı.
 
-![Örnek içerikle Kapsül panelinin temsili görünümü](docs/images/overview.svg)
+[DMG indir](https://github.com/bugraozgenc-dotcom/kapsul/releases/latest) · [English](README.en.md) · [Kullanım rehberi](docs/USAGE.tr.md)
 
-*Temsili ürün görselidir; örnek içerik kullanılmıştır.*
+![Kapsül 0.6.0 — çalışan uygulamadaki bağlantı kartları](docs/images/screenshots/links.png)
 
-## İndir ve başla
+*Bu sayfadaki ekran görüntüleri çalışan Kapsül 0.6.0 uygulamasından alındı.*
 
-macOS **14 veya üzeri** gerekir. Universal paket Apple Silicon ve Intel kodlarını içerir.
+## Hemen başlayalım
 
-1. [Releases](https://github.com/bugraozgenc-dotcom/kapsul/releases/latest) bölümünden **Kapsul-0.4.0-universal.dmg** dosyasını indir.
-2. DMG’yi aç, **Kapsül.app** dosyasını **Applications** klasörüne sürükle.
-3. Uygulamayı aç ve başka bir uygulamadan içerik kopyala. Kapsül açıkken yeni kayıtlar otomatik görünür.
+Mac’inde **macOS 14 veya üzeri** olması yeterli.
 
-**Bu sürüm ad hoc imzalıdır; Developer ID imzası ve Apple noter onayı yoktur.** macOS güvenlik uyarısı gösterebilir. [Kurulum rehberi](docs/USAGE.tr.md#kurulum) bu durumu açıklar. Intel çalışma testi henüz yapılmadı.
+1. [Son sürümden](https://github.com/bugraozgenc-dotcom/kapsul/releases/latest) **Kapsul-0.6.0-universal.dmg** dosyasını indir. Apple Silicon ve Intel kodları aynı pakette.
+2. DMG’yi açıp **Kapsül.app** simgesini **Applications** klasörüne sürükle.
+3. Kapsül’ü aç, bir şey kopyala. Artık geçmişinde bulabilirsin. **⌥ Space** ile paneli çağır, **⌘ F** ile ara.
 
-![Kopyala, bul ve yeniden kullan](docs/images/workflow.svg)
+Paket şu an ad hoc imzalı; Developer ID imzası ve Apple noter onayı bulunmuyor. Bu yüzden macOS açılışta güvenlik uyarısı gösterebilir. Ayrıntılar [kurulum rehberinde](docs/USAGE.tr.md#kurulum). Intel üzerinde çalışma testi henüz yapılmadı.
 
-## Özellikler
+## Neler yapabiliyor?
 
-- **Aranabilir panel:** ⌘F ile metin veya URL içinde ara; tür ve kaynak gruplarıyla filtrele.
-- **Bağlantılar:** Kartı tıklayarak tarayıcıda aç; isteğe bağlı başlık ve küçük görsel önizlemesi kullan.
-- **Görseller ve ekran görüntüleri:** Yeni ekran görüntülerini kaydet; üzerine gelerek büyük önizlemeyi aç ve kopyala.
-- **Kaynaklar:** LinkedIn, WhatsApp, Facebook, Instagram, YouTube, Behance, Medium, X, TikTok, Reddit, Pinterest, GitHub, Dribbble, Vimeo, Telegram ve Discord. Ayarlardan kendi alan adı gruplarını ekle.
-- **Düzenleme:** Tarih ve saat, sabitleme, onayla silme ve yeşil animasyonlu kopyalama geri bildirimi.
-- **Saklama süresi:** 1 ay, 3 ay, 1 yıl veya Sonsuz.
-- **Görünüm ve dil:** Açık, koyu veya sistem görünümü; Türkçe, English, Français, Deutsch ve Español.
-- **Yerel macOS arayüzü:** SwiftUI, cam katmanlar, menü çubuğu erişimi ve duraklatılabilir pano takibi.
+- **Kopyaladıklarını bul:** Metin, bağlantı, görsel, ekran görüntüsü ve dosya yolu kayıtlarını ara; türlerine veya kaynaklarına göre filtrele.
+- **Kaynakları takip et:** Grupların yanında kayıt sayısını gör. En son kopyaladığın kaynak üstte olsun; istersen kendi alan adı gruplarını ekle.
+- **Görselden metin çıkar:** Yerel OCR ile görseldeki yazıyı bul, ara ve kopyala. Büyük görsel önizlemesi yalnızca tıklayınca açılır.
+- **Geçmişini düzenle:** Önemli kayıtları sabitle, etiket ve koleksiyon ekle. Çoklu seçimle istemediklerini topluca sil.
+- **Görünümü kendine göre ayarla:** Açık, koyu veya sistem temasını seç; cam arka planın şeffaflığını değiştir. Sol menünün rengini, şeffaflığını ve genişliğini de ayarlayabilirsin.
+- **Günlük kullanımı kolaylaştır:** Mac açıldığında başlatmayı aç, panel kısayolunu değiştir, metni biçimiyle veya düz metin olarak kopyala.
+- **Kontrol sende olsun:** Pano takibini duraklat, belirli uygulamaları hariç tut, saklama süresini seç. Geçmişini görselleriyle birlikte yedekleyip geri yükle.
+- **Güncel kal:** Ayarlar’dan güncellemeleri kontrol et; Sparkle ile yayımlanan yeni sürümü indirip yükle.
 
-## Kullanım ve veriler
+Türkçe, İngilizce, Fransızca, Almanca ve İspanyolca arayüz desteği var.
 
-[Türkçe rehber](docs/USAGE.tr.md) ve [English guide](docs/USAGE.en.md) kurulum, arama, önizleme, kaynak ekleme ve ayarları adım adım anlatır.
+![Kapsül’de kaynak grubu ve kayıt sayıları](docs/images/screenshots/source-github.png)
 
-Kayıtlar bu Mac’te `~/Library/Application Support/CopyGlass/` içinde saklanır; ek uygulama şifrelemesi yoktur. Bağlantı önizlemeleri varsayılan olarak kapalıdır; açıldığında hedef sitelere ağ isteği yapılır. Dosyaların içerikleri yerine yolları saklanır. Sabitlenen kayıtlar da saklama süresine tabidir.
+![Kapsül’ün güncel görünüm, renk ve şeffaflık ayarları](docs/images/screenshots/appearance.png)
 
-Kapsül çalışırken panoyu yaklaşık 0,7 saniyede bir kontrol eder; çok hızlı ardışık kopyalar atlanabilir. Önceden alınmış ekran görüntüleri topluca içe aktarılmaz. Tarayıcıdan kopyalanan düz metnin kaynak sitesi her zaman belirlenemez. Telefon veya bulut eşitlemesi uygulamaya dahil değildir.
+## Veriler nerede duruyor?
 
-## Kaynak koddan derleme
+Geçmişin bu Mac’te, `~/Library/Application Support/CopyGlass/` klasöründe tutuluyor. Uygulamaya özel ek şifreleme veya Kapsül’e ait bulut/telefon eşitlemesi yok. Dosyaların içeriği yerine yolları saklanıyor.
 
-Xcode ve Command Line Tools yüklü bir Mac kullan. Kaynakları Xcode’da `Package.swift` ile de açabilirsin.
+OCR cihazda çalışıyor. Bağlantı önizlemeleri varsayılan olarak kapalı; açarsan hedef sitelere önizleme almak için istek gönderiliyor. Güncelleme kontrolü GitHub’a bağlanıyor.
+
+Kapsül açıkken panoyu yaklaşık 0,7 saniyede bir kontrol ediyor; çok hızlı ardışık kopyalar atlanabilir. Eski ekran görüntülerini topluca içe aktarmıyor. Tarayıcıdan kopyalanan düz metnin hangi siteden geldiği her zaman anlaşılmayabilir. Sabitlenen kayıtlar da seçtiğin saklama süresine tabi.
+
+## Birlikte geliştirelim
+
+Kapsül hâlâ gelişiyor. Bir şey takılırsa [Issues](https://github.com/bugraozgenc-dotcom/kapsul/issues) bölümüne yaz; ne yaptığını ve ne beklediğini anlatman çok işimize yarar. Fikirler ve pull request’ler de hoş gelir.
+
+Daha ayrıntılı anlatım için [pano araçları](docs/LIBRARY.tr.md), [güncellemeler](docs/UPDATES.tr.md) ve [0.6.0 sürüm notlarına](docs/releases/v0.6.0.md) bakabilirsin.
+
+## Kaynak koddan çalıştırmak istersen
+
+Xcode ve Command Line Tools yüklü bir Mac’te:
 
 ```sh
 git clone https://github.com/bugraozgenc-dotcom/kapsul.git
@@ -52,19 +64,15 @@ scripts/build-app.sh
 open "dist/Kapsül.app"
 ```
 
-Release uygulaması ve DMG üretmek için:
+Universal dağıtım paketi hazırlamak için:
 
 ```sh
 scripts/check.sh
 scripts/build-app.sh --release --universal
 scripts/package-dmg.sh
-(cd dist && shasum -a 256 -c Kapsul-0.4.0-universal.dmg.sha256)
+(cd dist && shasum -a 256 -c Kapsul-0.6.0-universal.dmg.sha256)
 ```
 
-Çıktılar `dist/` altında oluşur. Geçici dosyalar yerel önbellekte tutulur. `COPYGLASS_VERSION` ve `COPYGLASS_BUILD_NUMBER` ile sürüm değiştirilebilir. Geçerli bir **Developer ID Application** sertifikası varsa `CODE_SIGN_IDENTITY` ile imzalanabilir; noter onayı ayrıca gerekir. Varsayılan imza ad hoc’tur.
+Çıktılar `dist/` klasörüne gelir. Xcode’da `Package.swift` dosyasını da açabilirsin. Sürüm için `COPYGLASS_VERSION` ve `COPYGLASS_BUILD_NUMBER`, geçerli Developer ID sertifikasıyla imzalamak için `CODE_SIGN_IDENTITY` kullanılabilir. Noter onayı ayrıca yapılır. İmzalı Sparkle paketi için [güncelleme rehberine](docs/UPDATES.tr.md) bak.
 
-GitHub Actions push/PR üzerinde kontrolleri çalıştırır. **Actions → macOS checks → Run workflow** ayrıca universal uygulama ve DMG üretir; dosyalar çalışma artifact’ı olarak indirilir.
-
-## Lisans ve katkı
-
-Kaynak kod [MIT lisanslıdır](LICENSE). Marka simgeleri için [Simple Icons bildirimi](Sources/CopyGlass/Resources/NOTICE.txt) geçerlidir; marka adları ilgili sahiplerine aittir. Hata bildirimleri ve katkılar Issues ve Pull Requests üzerinden gönderilebilir. [0.4.0 sürüm notları](docs/releases/v0.4.0.md).
+Kaynak kod [MIT lisanslı](LICENSE). Marka simgeleri için [Simple Icons bildirimi](Sources/CopyGlass/Resources/NOTICE.txt) geçerli; marka adları sahiplerine ait.

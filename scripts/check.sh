@@ -63,4 +63,10 @@ print 'Running screenshot monitor checks...'
 xcrun swiftc "${kapsul_swift_args[@]}" Sources/CopyGlass/ScreenshotMonitor.swift \
   Tests/ScreenshotMonitorChecks.swift -o "$kapsul_check_work/screenshots"
 "$kapsul_check_work/screenshots"
+print 'Running library feature checks...'
+xcrun swiftc "${kapsul_swift_args[@]}" Sources/CopyGlass/ClipModels.swift Sources/CopyGlass/ClipSource.swift \
+  Sources/CopyGlass/AppLocalization.swift Sources/CopyGlass/CustomSource.swift Sources/CopyGlass/ClipboardStore.swift \
+  Sources/CopyGlass/ScreenshotMonitor.swift Sources/CopyGlass/TextRecognition.swift Sources/CopyGlass/HistoryBackup.swift \
+  Tests/LibraryChecks.swift -o "$kapsul_check_work/library"
+"$kapsul_check_work/library"
 print 'All checks passed.'

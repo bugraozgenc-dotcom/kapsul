@@ -8,6 +8,8 @@ name: macOS checks
       - "scripts/**"
       - "Assets/Branding/Kapsul.icns"
       - "Package.swift"
+      - "Package.resolved"
+      - "Config/**"
       - ".github/workflows/ci.yml"
   pull_request:
     paths:
@@ -16,6 +18,8 @@ name: macOS checks
       - "scripts/**"
       - "Assets/Branding/Kapsul.icns"
       - "Package.swift"
+      - "Package.resolved"
+      - "Config/**"
       - ".github/workflows/ci.yml"
   workflow_dispatch:
 
@@ -39,6 +43,8 @@ jobs:
         env:
           KAPSUL_CHECK_CACHE_DIR: ${{ runner.temp }}/kapsul-checks
         run: scripts/check.sh
+      - name: Compile the complete app
+        run: swift build --scratch-path "${{ runner.temp }}/copyglass-build"
 
   package:
     name: Build universal DMG
