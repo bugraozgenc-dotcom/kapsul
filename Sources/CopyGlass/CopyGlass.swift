@@ -220,13 +220,12 @@ import LinkPresentation
             }.frame(minWidth: 850, minHeight: 600).background { Button(localization.text("Ara")) { searchFocused = true }.keyboardShortcut("f", modifiers: .command).hidden() }.sheet(isPresented: $settings) { SettingsView() }.alert(localization.text("Depolama hatası"), isPresented: Binding(get: { store.error != nil }, set: { if !$0 { store.error = nil } })) { Button(localization.text("Tamam")) { store.error = nil } } message: { Text(store.error ?? "") }
     }
     private var sidebar: some View {
-            VStack(alignment: .leading, spacing: 24) {
-                BrandHeader().padding(.top, 22).padding(.horizontal, 18)
-                GlassSidebar(selection: $selection)
-                    .overlay(alignment: .bottom) {
-                        SidebarSettingsFooter(title: localization.text("Ayarlar")) { settings = true }
-                    }
-            }.background(SidebarTint())
+            GlassSidebar(selection: $selection)
+                .padding(.top, 22)
+                .overlay(alignment: .bottom) {
+                    SidebarSettingsFooter(title: localization.text("Ayarlar")) { settings = true }
+                }
+                .background(SidebarTint())
                 .navigationSplitViewColumnWidth(min: 180, ideal: 220, max: 360)
     }
     private var detailPanel: some View {
@@ -274,27 +273,6 @@ import LinkPresentation
         return true
     }
  }
- struct PanelMenu: View {
-    @EnvironmentObject private var updater: AppUpdater
-    @EnvironmentObject private var panel: PanelController
-    @Environment(\.openWindow) private var openWindow
-    @EnvironmentObject var store: ClipboardStore
-    @EnvironmentObject private var localization: AppLocalization
-    var body: some View {
-        Button(localization.text("Geçmiş panelini aç")) {
-            panel.showPanel = { openWindow(id: "history") }
-            panel.open()
-        }.keyboardShortcut("o", modifiers: .command)
-        Divider()
-        Button(localization.text(store.paused ? "Takibi sürdür" : "Takibi duraklat")) { store.paused.toggle() }
-        Divider()
-        ForEach(Array(store.clips.prefix(8))) { clip in Button(clip.title) { store.copy(clip) } }
-        Divider()
-        Button(localization.text("Güncellemeleri kontrol et")) { updater.checkForUpdates() }.disabled(!updater.canCheckForUpdates)
-        Divider()
-        Button(localization.text("Çıkış")) { NSApplication.shared.terminate(nil) }
-    }
- }
  @main struct KapsulApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var store = ClipboardStore()
@@ -313,7 +291,7 @@ import LinkPresentation
                 }
             }
         MenuBarExtra("Kapsül", systemImage: "doc.on.clipboard") {
-            PanelMenu().environmentObject(panel).environmentObject(updater).environmentObject(store).environmentObject(localization).environment(\.locale, localization.language.locale)
-        }
+            PanelMenu().environmentObject(panel).environmentObject(updater).environmentObject(store).environmentObject(catalog).environmentObject(localization).environment(\.locale, localization.language.locale)
+        }.menuBarExtraStyle(.window)
     }
  }

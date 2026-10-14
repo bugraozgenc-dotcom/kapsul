@@ -52,6 +52,8 @@
     "Açık": "Açık",
     "Koyu": "Koyu",
     "Sistem seçeneği Mac’in görünüm ayarını izler.": "Sistem seçeneği Mac’in görünüm ayarını izler.",
+    "Liquid Glass": "Liquid Glass",
+    "Cam efektini açar. Kapattığınızda arka plan opak görünür.": "Cam efektini açar. Kapattığınızda arka plan opak görünür.",
     "Kaynaklarım": "Kaynaklarım",
     "Kendi sitelerini gruplara ekle. Alan adı ve alt alan adlarıyla eşleşen mevcut ve yeni bağlantılar bu grupta görünür.": "Kendi sitelerini gruplara ekle. Alan adı ve alt alan adlarıyla eşleşen mevcut ve yeni bağlantılar bu grupta görünür.",
     "Kaynağı kaldır; kayıtları koru": "Kaynağı kaldır; kayıtları koru",
@@ -179,7 +181,14 @@
     "Sol menü": "Sol menü",
     "Sol menü rengi": "Sol menü rengi",
     "Sol menü şeffaflığı": "Sol menü şeffaflığı",
-    "Varsayılana dön": "Varsayılana dön"
+    "Varsayılana dön": "Varsayılana dön",
+    "Takip duraklatıldı": "Takip duraklatıldı",
+    "Pano takibi açık": "Pano takibi açık",
+    "Son kayıtlar": "Son kayıtlar",
+    "Henüz kayıt yok": "Henüz kayıt yok",
+    "Kopyaladığınız içerikler burada görünür.": "Kopyaladığınız içerikler burada görünür.",
+    "Bu grupta henüz kayıt yok": "Bu grupta henüz kayıt yok",
+    "Diğer kayıtlar için başka bir grup seçin.": "Diğer kayıtlar için başka bir grup seçin."
   },
   "en": {
     "Metin": "Text",
@@ -234,6 +243,8 @@
     "Açık": "Light",
     "Koyu": "Dark",
     "Sistem seçeneği Mac’in görünüm ayarını izler.": "System follows your Mac’s appearance setting.",
+    "Liquid Glass": "Liquid Glass",
+    "Cam efektini açar. Kapattığınızda arka plan opak görünür.": "Enables the glass effect. When turned off, the background is opaque.",
     "Kaynaklarım": "My sources",
     "Kendi sitelerini gruplara ekle. Alan adı ve alt alan adlarıyla eşleşen mevcut ve yeni bağlantılar bu grupta görünür.": "Add your own websites as groups. Existing and new links matching the domain or its subdomains appear in that group.",
     "Kaynağı kaldır; kayıtları koru": "Remove source; keep items",
@@ -361,7 +372,14 @@
     "Sol menü": "Sidebar",
     "Sol menü rengi": "Sidebar color",
     "Sol menü şeffaflığı": "Sidebar transparency",
-    "Varsayılana dön": "Reset to default"
+    "Varsayılana dön": "Reset to default",
+    "Takip duraklatıldı": "Tracking paused",
+    "Pano takibi açık": "Clipboard tracking active",
+    "Son kayıtlar": "Recent items",
+    "Henüz kayıt yok": "No items yet",
+    "Kopyaladığınız içerikler burada görünür.": "Items you copy appear here.",
+    "Bu grupta henüz kayıt yok": "No items in this group yet",
+    "Diğer kayıtlar için başka bir grup seçin.": "Select another group to see other items."
   },
   "fr": {
     "Metin": "Texte",
@@ -416,6 +434,8 @@
     "Açık": "Clair",
     "Koyu": "Sombre",
     "Sistem seçeneği Mac’in görünüm ayarını izler.": "L’option Système suit le réglage d’apparence de votre Mac.",
+    "Liquid Glass": "Liquid Glass",
+    "Cam efektini açar. Kapattığınızda arka plan opak görünür.": "Active l’effet de verre. Lorsque cette option est désactivée, le fond est opaque.",
     "Kaynaklarım": "Mes sources",
     "Kendi sitelerini gruplara ekle. Alan adı ve alt alan adlarıyla eşleşen mevcut ve yeni bağlantılar bu grupta görünür.": "Ajoutez vos propres sites comme groupes. Les liens existants et futurs correspondant au domaine ou à ses sous-domaines y apparaîtront.",
     "Kaynağı kaldır; kayıtları koru": "Retirer la source et conserver les éléments",
@@ -543,7 +563,14 @@
     "Sol menü": "Barre latérale",
     "Sol menü rengi": "Couleur de la barre latérale",
     "Sol menü şeffaflığı": "Transparence de la barre latérale",
-    "Varsayılana dön": "Rétablir les valeurs par défaut"
+    "Varsayılana dön": "Rétablir les valeurs par défaut",
+    "Takip duraklatıldı": "Suivi en pause",
+    "Pano takibi açık": "Suivi du presse-papiers actif",
+    "Son kayıtlar": "Éléments récents",
+    "Henüz kayıt yok": "Aucun élément pour le moment",
+    "Kopyaladığınız içerikler burada görünür.": "Les éléments copiés apparaissent ici.",
+    "Bu grupta henüz kayıt yok": "Aucun élément dans ce groupe",
+    "Diğer kayıtlar için başka bir grup seçin.": "Sélectionnez un autre groupe pour voir les autres éléments."
   },
   "de": {
     "Metin": "Text",
@@ -598,6 +625,8 @@
     "Açık": "Hell",
     "Koyu": "Dunkel",
     "Sistem seçeneği Mac’in görünüm ayarını izler.": "System übernimmt die Darstellungseinstellung deines Mac.",
+    "Liquid Glass": "Liquid Glass",
+    "Cam efektini açar. Kapattığınızda arka plan opak görünür.": "Aktiviert den Glaseffekt. Wenn deaktiviert, ist der Hintergrund undurchsichtig.",
     "Kaynaklarım": "Meine Quellen",
     "Kendi sitelerini gruplara ekle. Alan adı ve alt alan adlarıyla eşleşen mevcut ve yeni bağlantılar bu grupta görünür.": "Füge eigene Websites als Gruppen hinzu. Vorhandene und neue Links, die zur Domain oder ihren Subdomains gehören, erscheinen in dieser Gruppe.",
     "Kaynağı kaldır; kayıtları koru": "Quelle entfernen, Einträge behalten",
@@ -725,7 +754,14 @@
     "Sol menü": "Seitenleiste",
     "Sol menü rengi": "Farbe der Seitenleiste",
     "Sol menü şeffaflığı": "Transparenz der Seitenleiste",
-    "Varsayılana dön": "Auf Standard zurücksetzen"
+    "Varsayılana dön": "Auf Standard zurücksetzen",
+    "Takip duraklatıldı": "Erfassung pausiert",
+    "Pano takibi açık": "Zwischenablage-Erfassung aktiv",
+    "Son kayıtlar": "Letzte Einträge",
+    "Henüz kayıt yok": "Noch keine Einträge",
+    "Kopyaladığınız içerikler burada görünür.": "Kopierte Inhalte erscheinen hier.",
+    "Bu grupta henüz kayıt yok": "Noch keine Einträge in dieser Gruppe",
+    "Diğer kayıtlar için başka bir grup seçin.": "Wähle eine andere Gruppe, um weitere Einträge zu sehen."
   },
   "es": {
     "Metin": "Texto",
@@ -780,6 +816,8 @@
     "Açık": "Claro",
     "Koyu": "Oscuro",
     "Sistem seçeneği Mac’in görünüm ayarını izler.": "Sistema sigue el ajuste de apariencia de tu Mac.",
+    "Liquid Glass": "Liquid Glass",
+    "Cam efektini açar. Kapattığınızda arka plan opak görünür.": "Activa el efecto de cristal. Al desactivarlo, el fondo es opaco.",
     "Kaynaklarım": "Mis fuentes",
     "Kendi sitelerini gruplara ekle. Alan adı ve alt alan adlarıyla eşleşen mevcut ve yeni bağlantılar bu grupta görünür.": "Añade tus propios sitios como grupos. Los enlaces existentes y nuevos que coincidan con el dominio o sus subdominios aparecerán en ese grupo.",
     "Kaynağı kaldır; kayıtları koru": "Quitar la fuente y conservar los elementos",
@@ -907,6 +945,13 @@
     "Sol menü": "Barra lateral",
     "Sol menü rengi": "Color de la barra lateral",
     "Sol menü şeffaflığı": "Transparencia de la barra lateral",
-    "Varsayılana dön": "Restablecer valores predeterminados"
+    "Varsayılana dön": "Restablecer valores predeterminados",
+    "Takip duraklatıldı": "Seguimiento pausado",
+    "Pano takibi açık": "Seguimiento del portapapeles activo",
+    "Son kayıtlar": "Elementos recientes",
+    "Henüz kayıt yok": "Aún no hay elementos",
+    "Kopyaladığınız içerikler burada görünür.": "Los elementos que copies aparecerán aquí.",
+    "Bu grupta henüz kayıt yok": "Aún no hay elementos en este grupo",
+    "Diğer kayıtlar için başka bir grup seçin.": "Selecciona otro grupo para ver más elementos."
   }
 }

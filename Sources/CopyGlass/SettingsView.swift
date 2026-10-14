@@ -8,6 +8,7 @@ struct SettingsView: View {
   @Environment(\.dismiss) private var dismiss
   @AppStorage("linkPreviews") private var previews = false
   @AppStorage("appearance") private var appearance = AppearanceMode.system.rawValue
+  @AppStorage("liquidGlassEnabled") private var liquidGlassEnabled = true
   @AppStorage("backgroundTransparency") private var transparency = 75.0
   @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
   @StateObject private var launchAtLogin = LaunchAtLogin()
@@ -160,6 +161,9 @@ struct SettingsView: View {
         }.pickerStyle(.segmented)
         Text(localization.text("Sistem seçeneği Mac’in görünüm ayarını izler.")).font(.caption)
           .foregroundStyle(.secondary)
+        Toggle(localization.text("Liquid Glass"), isOn: $liquidGlassEnabled)
+        Text(localization.text("Cam efektini açar. Kapattığınızda arka plan opak görünür."))
+          .font(.caption).foregroundStyle(.secondary)
         HStack {
           Text(localization.text("Arka plan şeffaflığı"))
           Spacer()
@@ -167,7 +171,7 @@ struct SettingsView: View {
         }
         Slider(value: $transparency, in: 0...100, step: 5) {
           Text(localization.text("Arka plan şeffaflığı"))
-        }.labelsHidden().frame(maxWidth: .infinity).disabled(reduceTransparency)
+        }.labelsHidden().frame(maxWidth: .infinity).disabled(!liquidGlassEnabled || reduceTransparency)
         HStack {
           Text(localization.text("Opak"))
           Spacer()

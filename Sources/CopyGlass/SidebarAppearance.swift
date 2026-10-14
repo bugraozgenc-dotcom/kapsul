@@ -16,6 +16,7 @@ struct SidebarTint: View {
 struct SidebarAppearanceSettings: View {
     @EnvironmentObject private var localization: AppLocalization
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @AppStorage("liquidGlassEnabled") private var liquidGlassEnabled = true
     @AppStorage("sidebarRed") private var red = 0.0
     @AppStorage("sidebarGreen") private var green = 0.0
     @AppStorage("sidebarBlue") private var blue = 0.0
@@ -42,7 +43,7 @@ struct SidebarAppearanceSettings: View {
                 }
                 Slider(value: $transparency, in: 0...100, step: 1) {
                     Text(localization.text("Sol menü şeffaflığı"))
-                }.labelsHidden().frame(maxWidth: .infinity).disabled(reduceTransparency)
+                }.labelsHidden().frame(maxWidth: .infinity).disabled(!liquidGlassEnabled || reduceTransparency)
                 HStack {
                     Text(localization.text("Opak"))
                     Spacer()
