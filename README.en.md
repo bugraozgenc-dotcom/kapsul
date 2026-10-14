@@ -16,7 +16,7 @@ Kapsül keeps the text, links and images you copy on your Mac together, so you c
 
 You’ll need macOS 14 or later.
 
-1. Download **Kapsul-0.6.0-universal.dmg** from [the latest release](https://github.com/bugraozgenc-dotcom/kapsul/releases/latest). It includes Apple Silicon and Intel code.
+1. Download **Kapsul-0.7.0-universal.dmg** from [the latest release](https://github.com/bugraozgenc-dotcom/kapsul/releases/latest). It includes Apple Silicon and Intel code.
 2. Open the DMG and drag **Kapsül.app** to **Applications**.
 3. Open Kapsül and copy something. Use **⌥ Space** to bring up history and **⌘ F** to search.
 
@@ -28,7 +28,8 @@ The package is ad hoc signed, without a Developer ID signature or Apple notariza
 - See item counts beside groups, with recently used sources first. Add your own domain groups.
 - Extract text from images using on-device OCR. Click an image to open its larger preview.
 - Pin items, add tags and collections, and use multiple selection to delete unwanted items together.
-- Choose light, dark or system appearance. Adjust the glass background, sidebar color and transparency, and drag the sidebar divider to resize it.
+- Open the animated menu bar panel, filter by group, pin or unpin items, and copy them again with visible confirmation.
+- Choose light, dark or system appearance. Turn Liquid Glass on or off and adjust the background transparency, sidebar color and width. Native Liquid Glass is used on macOS 26 or later, with a blurred glass fallback on older versions.
 - Launch at login, change the panel shortcut, and copy formatted or plain text.
 - Pause capture, exclude apps, choose retention, and back up or restore history with its images.
 - Check for updates in Settings and install new releases through Sparkle.
@@ -51,7 +52,7 @@ Capture checks the clipboard about every 0.7 seconds while Kapsül is running, s
 
 Kapsül is still growing. Found a rough edge or have an idea? Drop by [Issues](https://github.com/bugraozgenc-dotcom/kapsul/issues). Contributions are welcome too.
 
-For details, see the [user guide](docs/USAGE.en.md), [library features](docs/LIBRARY.tr.md), [updates](docs/UPDATES.tr.md) and [0.6.0 release notes](docs/releases/v0.6.0.md).
+For details, see the [user guide](docs/USAGE.en.md), [library features](docs/LIBRARY.tr.md), [updates](docs/UPDATES.tr.md) and [0.7.0 release notes](docs/releases/v0.7.0.md).
 
 ## Build it yourself
 
@@ -70,7 +71,7 @@ For a universal distribution:
 scripts/check.sh
 scripts/build-app.sh --release --universal
 scripts/package-dmg.sh
-(cd dist && shasum -a 256 -c Kapsul-0.6.0-universal.dmg.sha256)
+(cd dist && shasum -a 256 -c Kapsul-0.7.0-universal.dmg.sha256)
 ```
 
 Outputs are in `dist/`. You can also open `Package.swift` in Xcode. Set `COPYGLASS_VERSION` and `COPYGLASS_BUILD_NUMBER` to change the version, or `CODE_SIGN_IDENTITY` to use a valid Developer ID certificate. Notarization is separate. See the update guide for signed Sparkle archives.

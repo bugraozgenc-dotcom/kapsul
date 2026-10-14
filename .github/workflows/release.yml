@@ -6,11 +6,11 @@ name: Prepare Kapsul release
       version:
         description: 'Version (x.y.z)'
         required: true
-        default: '0.6.0'
+        default: '0.7.0'
       build_number:
         description: 'Build number (must increase for every release)'
         required: true
-        default: '6'
+        default: '7'
 
 permissions:
   contents: write

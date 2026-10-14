@@ -50,8 +50,8 @@ from pathlib import Path
 source = Path(sys.argv[1])
 build_root = Path(sys.argv[2]).expanduser().resolve()
 configuration, requested_arch = sys.argv[3:5]
-version = os.environ.get('COPYGLASS_VERSION', '0.6.0')
-build_number = os.environ.get('COPYGLASS_BUILD_NUMBER', '6')
+version = os.environ.get('COPYGLASS_VERSION', '0.7.0')
+build_number = os.environ.get('COPYGLASS_BUILD_NUMBER', '7')
 if not re.fullmatch(r'\d+\.\d+\.\d+', version) or not re.fullmatch(r'\d+', build_number):
     raise SystemExit('COPYGLASS_VERSION must be x.y.z; COPYGLASS_BUILD_NUMBER must be an integer.')
 identity = os.environ.get('CODE_SIGN_IDENTITY', '').strip() or '-'

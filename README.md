@@ -16,7 +16,7 @@ Kapsül’ü, Mac’te kopyaladığımız şeyleri tekrar aramak zorunda kalmaya
 
 Mac’inde **macOS 14 veya üzeri** olması yeterli.
 
-1. [Son sürümden](https://github.com/bugraozgenc-dotcom/kapsul/releases/latest) **Kapsul-0.6.0-universal.dmg** dosyasını indir. Apple Silicon ve Intel kodları aynı pakette.
+1. [Son sürümden](https://github.com/bugraozgenc-dotcom/kapsul/releases/latest) **Kapsul-0.7.0-universal.dmg** dosyasını indir. Apple Silicon ve Intel kodları aynı pakette.
 2. DMG’yi açıp **Kapsül.app** simgesini **Applications** klasörüne sürükle.
 3. Kapsül’ü aç, bir şey kopyala. Artık geçmişinde bulabilirsin. **⌥ Space** ile paneli çağır, **⌘ F** ile ara.
 
@@ -28,7 +28,8 @@ Paket şu an ad hoc imzalı; Developer ID imzası ve Apple noter onayı bulunmuy
 - **Kaynakları takip et:** Grupların yanında kayıt sayısını gör. En son kopyaladığın kaynak üstte olsun; istersen kendi alan adı gruplarını ekle.
 - **Görselden metin çıkar:** Yerel OCR ile görseldeki yazıyı bul, ara ve kopyala. Büyük görsel önizlemesi yalnızca tıklayınca açılır.
 - **Geçmişini düzenle:** Önemli kayıtları sabitle, etiket ve koleksiyon ekle. Çoklu seçimle istemediklerini topluca sil.
-- **Görünümü kendine göre ayarla:** Açık, koyu veya sistem temasını seç; cam arka planın şeffaflığını değiştir. Sol menünün rengini, şeffaflığını ve genişliğini de ayarlayabilirsin.
+- **Menü bardan hızla eriş:** Animasyonla açılan panelde gruplara göre filtrele, kayıtları sabitle veya sabitlemeyi kaldır; tek tıkla yeniden kopyala ve kopyalama onayını gör.
+- **Görünümü kendine göre ayarla:** Açık, koyu veya sistem temasını seç. Liquid Glass cam efektini açıp kapat; arka planın şeffaflığını, sol menünün rengini ve genişliğini ayarla. macOS 26 ve üzerinde yerel Liquid Glass, önceki sürümlerde bulanık cam görünümü kullanılır.
 - **Günlük kullanımı kolaylaştır:** Mac açıldığında başlatmayı aç, panel kısayolunu değiştir, metni biçimiyle veya düz metin olarak kopyala.
 - **Kontrol sende olsun:** Pano takibini duraklat, belirli uygulamaları hariç tut, saklama süresini seç. Geçmişini görselleriyle birlikte yedekleyip geri yükle.
 - **Güncel kal:** Ayarlar’dan güncellemeleri kontrol et; Sparkle ile yayımlanan yeni sürümü indirip yükle.
@@ -50,7 +51,7 @@ Kapsül açıkken panoyu yaklaşık 0,7 saniyede bir kontrol ediyor; çok hızl�
 
 Kapsül hâlâ gelişiyor. Bir şey takılırsa [Issues](https://github.com/bugraozgenc-dotcom/kapsul/issues) bölümüne yaz; ne yaptığını ve ne beklediğini anlatman çok işimize yarar. Fikirler ve pull request’ler de hoş gelir.
 
-Daha ayrıntılı anlatım için [pano araçları](docs/LIBRARY.tr.md), [güncellemeler](docs/UPDATES.tr.md) ve [0.6.0 sürüm notlarına](docs/releases/v0.6.0.md) bakabilirsin.
+Daha ayrıntılı anlatım için [pano araçları](docs/LIBRARY.tr.md), [güncellemeler](docs/UPDATES.tr.md) ve [0.7.0 sürüm notlarına](docs/releases/v0.7.0.md) bakabilirsin.
 
 ## Kaynak koddan çalıştırmak istersen
 
@@ -69,7 +70,7 @@ Universal dağıtım paketi hazırlamak için:
 scripts/check.sh
 scripts/build-app.sh --release --universal
 scripts/package-dmg.sh
-(cd dist && shasum -a 256 -c Kapsul-0.6.0-universal.dmg.sha256)
+(cd dist && shasum -a 256 -c Kapsul-0.7.0-universal.dmg.sha256)
 ```
 
 Çıktılar `dist/` klasörüne gelir. Xcode’da `Package.swift` dosyasını da açabilirsin. Sürüm için `COPYGLASS_VERSION` ve `COPYGLASS_BUILD_NUMBER`, geçerli Developer ID sertifikasıyla imzalamak için `CODE_SIGN_IDENTITY` kullanılabilir. Noter onayı ayrıca yapılır. İmzalı Sparkle paketi için [güncelleme rehberine](docs/UPDATES.tr.md) bak.
